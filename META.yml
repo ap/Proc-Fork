@@ -1,8 +1,19 @@
---- #YAML:1.0
+---
 name: Proc-Fork
-version: 0.3
+version: 0.4
 author:
-  - Aristotle Pagaltzis <pagaltzis@gmx.de>
-abstract: Simple, intuitive interface to the fork() system call
+  - 'Aristotle Pagaltzis <pagaltzis@gmx.de>'
+abstract: 'Simple, intuitive interface to the fork() system call'
 license: perl
-generated_by: Module::Build version 0.2612, without YAML.pm
+resources:
+  license: http://dev.perl.org/licenses/
+build_requires:
+  Test::More: 0
+provides:
+  Proc::Fork:
+    file: lib/Proc/Fork.pm
+    version: 0.4
+generated_by: Module::Build version 0.2805
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.2.html
+  version: 1.2

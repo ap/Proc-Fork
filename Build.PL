@@ -9,9 +9,7 @@ my $builder = Module::Build->new(
     dist_version_from   => 'lib/Proc/Fork.pm',
     requires => { },
 	build_requires => {
-		'Test::More'          => 0,
-		'Test::Pod'           => 0,
-		'Test::Pod::Coverage' => 0,
+		'Test::More' => 0,
 	},
     add_to_cleanup      => [ 'Proc-Fork-*' ],
 	create_makefile_pl => 'traditional',

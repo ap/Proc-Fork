@@ -1,5 +1,9 @@
 Revision history for Proc-Fork
 
+0.4   2007 Apr 01
+	- Simplify internals a bit, in hopes of fixing #17474 and #17926;
+	  unfortunately, no dice
+
 0.3   2006 May 10
 	- Add tests with real fork() call,
 	  with intent to resolve stalled bugs #17474 and #17926

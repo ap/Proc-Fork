@@ -5,11 +5,10 @@ WriteMakefile
           'PL_FILES' => {},
           'INSTALLDIRS' => 'site',
           'NAME' => 'Proc::Fork',
+          'EXE_FILES' => [],
           'VERSION_FROM' => 'lib/Proc/Fork.pm',
           'PREREQ_PM' => {
-                           'Test::More' => 0,
-                           'Test::Pod::Coverage' => 0,
-                           'Test::Pod' => 0
+                           'Test::More' => 0
                          }
         )
 ;

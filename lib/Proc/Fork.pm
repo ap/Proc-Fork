@@ -1,6 +1,4 @@
 #!/usr/bin/perl
-use strict;
-use warnings;
 
 =head1 NAME
 
@@ -8,7 +6,7 @@ Proc::Fork - Simple, intuitive interface to the fork() system call
 
 =head1 VERSION
 
-This documentation describes Proc::Fork version 0.3
+This documentation describes Proc::Fork version 0.4
 
 =head1 SYNOPSIS
 
@@ -238,7 +236,7 @@ Please report any bugs or feature requests to C<bug-proc-fork@rt.cpan.org>, or t
 
 Aristotle Pagaltzis, L<mailto:pagaltzis@gmx.de>
 
-Original version by Eric J. Roode.
+Original version and most of the documentation by Eric J. Roode.
 
 =head1 COPYRIGHT AND LICENSE
 
@@ -256,62 +254,72 @@ IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY C
 
 package Proc::Fork;
 
-use Exporter;
-use Carp;
-use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION   = 0.3; # also change it in the docs
+$VERSION   = 0.4; # also change it in the docs
 @ISA       = qw( Exporter );
 @EXPORT    = qw( parent child error retry );
 @EXPORT_OK = qw();
 
-sub _process {
-	my ( $key, $val, $config ) = @_;
+use strict;
+use warnings;
 
-	# If there are too many parameters, or what is supposed to be a Proc::Fork
-	# object is not, then the user has almost certainly forgotten the semicolon
-	# after the final clause.
-	croak "Syntax error (missing semicolon after $key clause?)"
-		if @_ > 3
-		or eval { not $config->isa( __PACKAGE__ ) };
+use Exporter;
+use Carp;
 
-	# Set up default behaviour if no configuration object was passed in:
-	# * no code for the parent
-	# * nor for the child
-	# * no retry if the first fork attempt fails
-	# * die with error message on failure
-	$config ||= bless {
-		parent => sub {},
-		child  => sub {},
-		retry  => sub { 0 },
-		error  => sub { die "Cannot fork: $!\n" },
-	}, __PACKAGE__;
+sub _do_fork {
+	my ( $p, $c, $e, $r ) = @_;
 
-	# Now save information
-	$config->{ $key } = $val;
-
-	# The function is expected to return a value; this will hold true for all
-	# members of the call chain other than the last, in which case the current
-	# configuration is returned so it passes up the chain
-	return $config if defined wantarray;
-
-	# If we got here, it means this was the top call in the chain, and the fork
-	# request should be executed
 	my ( $pid, $retry );
-	do {
+	{
 		$pid = fork;
-	} while not defined( $pid ) and $config->{ retry }->( ++$retry );
+		redo if not defined( $pid ) and $r and $r->( ++$retry );
+	}
 
-	my ( $dispatch, $param ) =
-		  ( not defined $pid ) ? ( error => $retry )
-		: $pid == 0 ? ( child => () )
-		: ( parent => $pid );
+	if ( not defined $pid ) {
+		die "Cannot fork: $!\n" if not $e;
+		$e->();
+	}
+	elsif ( $pid ) {
+		$p->( $pid ) if $p;
+	}
+	else {
+		$c->() if $c;
+	}
 
-	$config->{ $dispatch }->( $param );
+	return;
 }
 
-sub parent (&;$) { unshift @_, qw( parent ); goto &_process; }
-sub child  (&;$) { unshift @_, qw( child  ); goto &_process; }
-sub error  (&;$) { unshift @_, qw( error  ); goto &_process; }
-sub retry  (&;$) { unshift @_, qw( retry  ); goto &_process; }
+BEGIN {
+
+	my %glob = (
+		child  => \*child,
+		error  => \*error,
+		retry  => \*retry,
+		parent => \*parent,
+	);
+
+	for my $key ( keys %glob ) {
+		*{ $glob{ $key } } = sub (&;$) {
+			my ( $val, $config ) = @_;
+
+			# too many arguments or not a config hash as 2nd argument?
+			# then the user has almost certainly forgotten the trailing semicolon
+			croak "Syntax error (missing semicolon after $key clause?)"
+				if @_ > 2
+				or ( @_ == 2 and not eval { $config->isa( __PACKAGE__ ) } );
+
+			$config ||= bless {}, __PACKAGE__;
+			$config->{ $key } = $val;
+
+			# if not called in void context, then we're not the final part of the call
+			# chain, so just pass the config up the chain
+			return $config if defined wantarray;
+
+			# otherwise, pull the trigger
+			@_ = @{ $config }{ qw( parent child error retry ) };
+			undef $config;
+			goto &_do_fork;
+		};
+	}
+}
 
 !!"In simplicity lies beauty.";
