@@ -1,5 +1,9 @@
 Revision history for Perl extension Fork.
 
+0.11  2005 October 3
+	- Add tests for POD and POD coverage
+	- Switch over to Module::Build
+
 0.1   2005 April 23
 	- Minor documentation fix
 	- Complete internal refactor

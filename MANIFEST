@@ -1,6 +1,10 @@
+README
 Changes
-Fork.pm
-Makefile.PL
+Build.PL
+t/00.all.t
+t/pod-coverage.t
+t/pod.t
+lib/Proc/Fork.pm
 MANIFEST
-test.pl
 META.yml
+Makefile.PL

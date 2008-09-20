@@ -1,10 +1,14 @@
-# http://module-build.sourceforge.net/META-spec.html
-#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
-name:         Proc-Fork
-version:      0.1
-version_from: Fork.pm
-installdirs:  site
+---
+name: Proc-Fork
+version: 0.11
+author:
+  - Aristotle Pagaltzis <pagaltzis@gmx.de>
+abstract: 'Simple, intuitive interface to the fork() system call'
+license: perl
 requires:
-
-distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.17
+  Test::More: 0
+provides:
+  Proc::Fork:
+    file: lib/Proc/Fork.pm
+    version: 0.11
+generated_by: Module::Build version 0.2611

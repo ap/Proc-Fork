@@ -1,3 +1,4 @@
+#!perl -T
 use strict;
 use warnings;
 
@@ -27,7 +28,7 @@ BEGIN { use_ok( 'Proc::Fork' ); }
 }
 
 {
-	my $f = retry { ok( 1, 'Retry code executes' ); 0 };
+	my $f = retry { ok( 1, 'Retry code executes' ); 0 } error {};
 	isa_ok( $f, 'Proc::Fork' );
 }
 
