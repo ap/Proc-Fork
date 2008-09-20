@@ -1,4 +1,8 @@
-Revision history for Perl extension Fork.
+Revision history for Proc-Fork
+
+0.2   2006 March 4
+	- Internals refactor to fix bugs #17474 and #17926
+	- Rejig tests, add a test for the syntax error catcher
 
 0.11  2005 October 3
 	- Add tests for POD and POD coverage
@@ -6,7 +10,7 @@ Revision history for Perl extension Fork.
 
 0.1   2005 April 23
 	- Minor documentation fix
-	- Complete internal refactor
+	- Complete internals refactor
 	- Add support and documentation for retry {}
 	- Create proper test suite
 

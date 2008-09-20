@@ -8,7 +8,7 @@ Proc::Fork - Simple, intuitive interface to the fork() system call
 
 =head1 VERSION
 
-This documentation describes Proc::Fork version 0.11
+This documentation describes Proc::Fork version 0.2
 
 =head1 SYNOPSIS
 
@@ -259,63 +259,59 @@ package Proc::Fork;
 use Exporter;
 use Carp;
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION   = 0.11; # also change it in the docs
+$VERSION   = 0.2; # also change it in the docs
 @ISA       = qw( Exporter );
 @EXPORT    = qw( parent child error retry );
 @EXPORT_OK = qw();
 
-# Default behaviour:
-# * no code for the parent
-# * nor for the child
-# * no retry if the first fork attempt fails
-# * die with error message on failure
-sub _setup {
-	my $class = shift;
-	bless {
+sub _process {
+	my ( $key, $val, $config ) = @_;
+
+	# If there are too many parameters, or what is supposed to be a Proc::Fork
+	# object is not, then the user has almost certainly forgotten the semicolon
+	# after the final clause.
+	croak "Syntax error (missing semicolon after $key clause?)"
+		if @_ > 3
+		or eval { not $config->isa( __PACKAGE__ ) };
+
+	# Set up default behaviour if no configuration object was passed in:
+	# * no code for the parent
+	# * nor for the child
+	# * no retry if the first fork attempt fails
+	# * die with error message on failure
+	$config ||= bless {
 		parent => sub {},
 		child  => sub {},
 		retry  => sub { 0 },
 		error  => sub { die "Cannot fork: $!\n" },
 	}, __PACKAGE__;
-}
 
-# If there are too many parameters, or what is supposed to be a Proc::Fork
-# object is not, then the user has almost certainly forgotten the semicolon
-# after the final clause.
-sub _configure {
-	my ( $key, $val, $obj ) = @_;
+	# Now save information
+	$config->{ $key } = $val;
 
-	croak "Syntax error (missing semicolon after " . __PACKAGE__ . " clause?)"
-		if @_ > 3
-		or defined $obj and not UNIVERSAL::isa( $obj, __PACKAGE__ );
+	# The function is expected to return a value; this will hold true for all
+	# members of the call chain other than the last, in which case the current
+	# configuration is returned so it passes up the chain
+	return $config if defined wantarray;
 
-	$obj ||= __PACKAGE__->_setup;
-	$obj->{ $key } = $val;
-
-	return $obj;
-}
-
-# The Proc::Fork object went out of scope, most probably because the
-# function that returned it was the last in line.
-sub DESTROY {
-	my $self = shift;
-
+	# If we got here, it means this was the top call in the chain, and the fork
+	# request should be executed
 	my ( $pid, $retry );
 	do {
 		$pid = fork;
-	} while not defined( $pid ) and $self->{ retry }->( ++$retry );
+	} while not defined( $pid ) and $config->{ retry }->( ++$retry );
 
 	my ( $dispatch, $param ) =
 		  ( not defined $pid ) ? ( "error", $retry )
 		: $pid == 0 ? ( "child", )
 		: ( "parent", $pid );
 
-	$self->{ $dispatch }->( $param );
+	$config->{ $dispatch }->( $param );
 }
 
-sub parent (&;$) { unshift @_, qw( parent ); goto &_configure; }
-sub child  (&;$) { unshift @_, qw( child  ); goto &_configure; }
-sub error  (&;$) { unshift @_, qw( error  ); goto &_configure; }
-sub retry  (&;$) { unshift @_, qw( retry  ); goto &_configure; }
+sub parent (&;$) { unshift @_, qw( parent ); goto &_process; }
+sub child  (&;$) { unshift @_, qw( child  ); goto &_process; }
+sub error  (&;$) { unshift @_, qw( error  ); goto &_process; }
+sub retry  (&;$) { unshift @_, qw( retry  ); goto &_process; }
 
-"In simplicity lies beauty.";
+!!"In simplicity lies beauty.";

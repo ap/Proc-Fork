@@ -7,9 +7,12 @@ my $builder = Module::Build->new(
     license             => 'perl',
     dist_author         => 'Aristotle Pagaltzis <pagaltzis@gmx.de>',
     dist_version_from   => 'lib/Proc/Fork.pm',
-    requires => {
-        'Test::More' => 0,
-    },
+    requires => { },
+	build_requires => {
+		'Test::More'          => 0,
+		'Test::Pod'           => 0,
+		'Test::Pod::Coverage' => 0,
+	},
     add_to_cleanup      => [ 'Proc-Fork-*' ],
 	create_makefile_pl => 'traditional',
 );
