@@ -1,40 +1,122 @@
-Revision history for Proc-Fork
+=head1 Revision history for Proc-Fork
 
-0.4   2007 Apr 01
-	- Simplify internals a bit, in hopes of fixing #17474 and #17926;
-	  unfortunately, no dice
 
-0.3   2006 May 10
-	- Add tests with real fork() call,
-	  with intent to resolve stalled bugs #17474 and #17926
-	- Add test for $pid getting passed to the parent block
+=head2 0.5 (2007-12-21 18:22:10+0100)
 
-0.2   2006 March 4
-	- Internals refactor to fix bugs #17474 and #17926
-	- Rejig tests, add a test for the syntax error catcher
+Many thanks to David Golden for the Windows compat fixes.
 
-0.11  2005 October 3
-	- Add tests for POD and POD coverage
-	- Switch over to Module::Build
+=over 4
 
-0.1   2005 April 23
-	- Minor documentation fix
-	- Complete internals refactor
-	- Add support and documentation for retry {}
-	- Create proper test suite
+=item * Windows compat: drop in-place modification of C<@_> and use of C<goto>
 
-0.05  2002 March 15
-	- Change namespace from Fork to Proc::Fork.
+=item * Windows compat: remove taint checking from tests to fix 
 
-0.04  2002 February 8
-	- Export parent, child, error by default.
-	- Add documentation examples.
+=item * Only load L<Carp> on demand
 
-0.03  2002 January 31
-	- Documentation changes only.
+=item * Stop using of L<Exporter>
 
-0.02  2002 January 30
-	- Bless the fork return value, for better error checking.
+=back
 
-0.01  2002 January 29
-	- original version
+
+=head2 0.4 (2007-04-01)
+
+=over 4
+
+=item * Simplify internals a bit, in hopes of fixing #17474 and #17926; unfortunately, no dice
+
+=back
+
+
+=head2 0.3 (2006-05-10)
+
+=over 4
+
+=item * Add tests with real fork() call, with intent to resolve stalled bugs #17474 and #17926
+
+=item * Add test for $pid getting passed to the parent block
+
+=back
+
+
+=head2 0.2 (2006-03-04)
+
+=over 4
+
+=item * Internals refactor to fix bugs #17474 and #17926
+
+=item * Rejig tests, add a test for the syntax error catcher
+
+=back
+
+
+=head2 0.11 (2005-10-03)
+
+=over 4
+
+=item * Add tests for POD and POD coverage
+
+=item * Switch over to Module::Build
+
+=back
+
+
+=head2 0.1 (2005-04-23)
+
+=over 4
+
+=item * Minor documentation fix
+
+=item * Complete internals refactor
+
+=item * Add support and documentation for retry {}
+
+=item * Create proper test suite
+
+=back
+
+
+=head2 0.05 (2002-03-15)
+
+=over 4
+
+=item * Change namespace from Fork to Proc::Fork.
+
+=back
+
+
+=head2 0.04 (2002-02-8)
+
+=over 4
+
+=item * Export parent, child, error by default.
+
+=item * Add documentation examples.
+
+=back
+
+
+=head2 0.03 (2002-01-31)
+
+=over 4
+
+=item * Documentation changes only.
+
+=back
+
+
+=head2 0.02 (2002-01-30)
+
+=over 4
+
+=item * Bless the fork return value, for better error checking.
+
+=back
+
+
+=head2 0.01 (2002-01-29)
+
+=over 4
+
+=item * original version
+
+=back

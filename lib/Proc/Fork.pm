@@ -1,12 +1,85 @@
 #!/usr/bin/perl
 
+package Proc::Fork;
+
+$VERSION = 0.5; # also change it in the docs
+
+use strict;
+use warnings;
+
+my $make_forkblock = sub {
+	my ( $config_key ) = shift;
+
+	return sub (&;$) {
+		my ( $val, $config ) = @_;
+
+		# too many arguments or not a config hash as 2nd argument?
+		# then the user has almost certainly forgotten the trailing semicolon
+		if ( @_ > 2 or ( @_ == 2 and not eval { $config->isa( __PACKAGE__ ) } ) ) {
+			require Carp;
+			Carp::croak( "Syntax error (missing semicolon after $config_key clause?)" );
+		}
+
+		$config ||= bless {}, __PACKAGE__;
+		$config->{ $config_key } = $val;
+
+		# if not called in void context, then we're not the final part of the call
+		# chain, so just pass the config up the chain
+		return $config if defined wantarray;
+
+		# otherwise, we pull the trigger
+		my ( $p, $c, $e, $r ) = delete @{ $config }{ qw( parent child error retry ) };
+
+		my $pid;
+
+		{
+			my $retry;
+
+			do {
+				$pid = fork;
+			} while ( not defined $pid ) and ( $r and $r->( ++$retry ) );
+		}
+
+		if    ( not defined $pid ) { $e ? $e->()       : die "Cannot fork: $!\n" }
+		elsif ( $pid )             { $p ? $p->( $pid ) : 0 }
+		else                       { $c ? $c->()       : 0 }
+
+		return;
+	};
+};
+
+my %block = map { $_ => $make_forkblock->( $_ ) } qw( child error retry parent );
+
+sub import {
+	my $class = shift;
+	my $pkg = caller;
+
+	@_ = keys %block if not @_;
+
+	for my $name ( @_ ) {
+		if ( not exists $block{ $name } ) {
+			require Carp;
+			Carp::croak( qq{"$name" is not exported by the $class module} );
+		}
+
+		no strict;
+		*{ $pkg . '::' . $name } = $block{ $name };
+	}
+
+	return 1;
+}
+
+__PACKAGE__->import;
+
+__END__
+
 =head1 NAME
 
 Proc::Fork - Simple, intuitive interface to the fork() system call
 
 =head1 VERSION
 
-This documentation describes Proc::Fork version 0.4
+This documentation describes Proc::Fork version 0.5
 
 =head1 SYNOPSIS
 
@@ -251,75 +324,3 @@ BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE S
 IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE THE SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 
 =cut
-
-package Proc::Fork;
-
-$VERSION   = 0.4; # also change it in the docs
-@ISA       = qw( Exporter );
-@EXPORT    = qw( parent child error retry );
-@EXPORT_OK = qw();
-
-use strict;
-use warnings;
-
-use Exporter;
-use Carp;
-
-sub _do_fork {
-	my ( $p, $c, $e, $r ) = @_;
-
-	my ( $pid, $retry );
-	{
-		$pid = fork;
-		redo if not defined( $pid ) and $r and $r->( ++$retry );
-	}
-
-	if ( not defined $pid ) {
-		die "Cannot fork: $!\n" if not $e;
-		$e->();
-	}
-	elsif ( $pid ) {
-		$p->( $pid ) if $p;
-	}
-	else {
-		$c->() if $c;
-	}
-
-	return;
-}
-
-BEGIN {
-
-	my %glob = (
-		child  => \*child,
-		error  => \*error,
-		retry  => \*retry,
-		parent => \*parent,
-	);
-
-	for my $key ( keys %glob ) {
-		*{ $glob{ $key } } = sub (&;$) {
-			my ( $val, $config ) = @_;
-
-			# too many arguments or not a config hash as 2nd argument?
-			# then the user has almost certainly forgotten the trailing semicolon
-			croak "Syntax error (missing semicolon after $key clause?)"
-				if @_ > 2
-				or ( @_ == 2 and not eval { $config->isa( __PACKAGE__ ) } );
-
-			$config ||= bless {}, __PACKAGE__;
-			$config->{ $key } = $val;
-
-			# if not called in void context, then we're not the final part of the call
-			# chain, so just pass the config up the chain
-			return $config if defined wantarray;
-
-			# otherwise, pull the trigger
-			@_ = @{ $config }{ qw( parent child error retry ) };
-			undef $config;
-			goto &_do_fork;
-		};
-	}
-}
-
-!!"In simplicity lies beauty.";
