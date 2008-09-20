@@ -1,0 +1,23 @@
+Revision history for Perl extension Fork.
+
+0.1   2005 April 23
+	- Minor documentation fix
+	- Complete internal refactor
+	- Add support and documentation for retry {}
+	- Create proper test suite
+
+0.05  2002 March 15
+	- Change namespace from Fork to Proc::Fork.
+
+0.04  2002 February 8
+	- Export parent, child, error by default.
+	- Add documentation examples.
+
+0.03  2002 January 31
+	- Documentation changes only.
+
+0.02  2002 January 30
+	- Bless the fork return value, for better error checking.
+
+0.01  2002 January 29
+	- original version
