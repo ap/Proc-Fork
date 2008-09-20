@@ -1,6 +1,6 @@
 ---
 name: Proc-Fork
-version: 0.6
+version: 0.61
 author:
   - 'Aristotle Pagaltzis <pagaltzis@gmx.de>'
 abstract: 'Simple, intuitive interface to the fork() system call'
@@ -12,7 +12,7 @@ build_requires:
 provides:
   Proc::Fork:
     file: lib/Proc/Fork.pm
-    version: 0.6
+    version: 0.61
 generated_by: Module::Build version 0.2808
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html

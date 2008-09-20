@@ -1,6 +1,15 @@
 =head1 Revision history for Proc-Fork
 
 
+=head2 0.61 (2007-12-23 12:06:22+0100)
+
+=over 4
+
+=item * Test suite fix attempt: in Perl 5.5.5, C<t/01.real.t> would generate the TAP header multiple times
+
+=back
+
+
 =head2 0.6 (2007-12-23 06:15:59+0100)
 
 =over 4

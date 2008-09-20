@@ -2,16 +2,18 @@
 use strict;
 use warnings;
 
-# impossible to beat Test::More into submission when fork()'s involved
+# impossible to beat Test::More into submission when fork() is involved
+# note: parent uses waitpid to ensure order of output
 
 sub say { print @_, "\n" }
 
-BEGIN { say '1..3'; }
+                             say '1..3';
+eval 'use Proc::Fork; 1' and say 'ok 1 - use Proc::Fork';
 
-BEGIN { eval 'use Proc::Fork'; if( $@ ) { say 'not ok 1 - use Proc::Fork'; exit } say 'ok 1 - use Proc::Fork' }
+eval do { local $/; <DATA> };
+__END__
 
-# parent uses waitpid to ensure order of output
-child  {                   say 'ok 2 - child code runs'  }
-parent { waitpid shift, 0; say 'ok 3 - parent code runs' }
+child  {                     say 'ok 2 - child code runs'  }
+parent { waitpid shift, 0;   say 'ok 3 - parent code runs' }
 
 # vim:ft=perl:
