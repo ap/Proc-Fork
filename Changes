@@ -1,6 +1,25 @@
 =head1 Revision history for Proc-Fork
 
 
+=head2 0.7 (2008-09-20 16:54:09+0200)
+
+=over 4
+
+=item * Completely new internal structure; modified API, now with a C<run_fork> wrapper.
+
+This should address both the semicolon problem and the context sensitivity problem pointed out on AnnoCPAN by dmcbride. Code written against the previous API design will continue to work unchanged.
+
+=item * L<Exporter::Tidy> replaces some local code.
+
+It's a very small pure-Perl module that shouldn't be a dependency burden, and it's a good design that deserves some advertisement.
+
+=item * POD examples extracted and provided as files in an F<eg/> directory.
+
+Yes, this is Kwalitee whoring. Hopefully I won't make changes to the docs that I then forget to update in the F<eg/> copies. Yay for CPANTS.
+
+=back
+
+
 =head2 0.61 (2007-12-23 12:06:22+0100)
 
 =over 4

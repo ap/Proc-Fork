@@ -6,7 +6,8 @@ my $builder = Module::Build->new(
 	module_name         => 'Proc::Fork',
 	license             => 'perl',
 	dist_author         => 'Aristotle Pagaltzis <pagaltzis@gmx.de>',
-	build_requires      => { 'Test::More' => 0 },
+	requires            => { 'Exporter::Tidy' => 0 },
+	build_requires      => { 'Test::More'     => 0 },
 	add_to_cleanup      => [ 'Proc-Fork-*' ],
 	create_makefile_pl  => 'traditional',
 );

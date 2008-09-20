@@ -4,7 +4,12 @@ Build.PL
 t/00.mock.t
 t/01.real.t
 lib/Proc/Fork.pm
+lib/Proc/Fork/Runner.pm
 MANIFEST
 META.yml
 Makefile.PL
 t/cpants.t
+eg/daemon.pl
+eg/multichild.pl
+eg/server.pl
+eg/simple.pl
