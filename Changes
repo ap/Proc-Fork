@@ -1,5 +1,10 @@
 Revision history for Proc-Fork
 
+0.3   2006 May 10
+	- Add tests with real fork() call,
+	  with intent to resolve stalled bugs #17474 and #17926
+	- Add test for $pid getting passed to the parent block
+
 0.2   2006 March 4
 	- Internals refactor to fix bugs #17474 and #17926
 	- Rejig tests, add a test for the syntax error catcher

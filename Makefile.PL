@@ -2,14 +2,14 @@
 use ExtUtils::MakeMaker;
 WriteMakefile
 (
+          'PL_FILES' => {},
+          'INSTALLDIRS' => 'site',
           'NAME' => 'Proc::Fork',
           'VERSION_FROM' => 'lib/Proc/Fork.pm',
           'PREREQ_PM' => {
-                           'Test::More' => '0',
-                           'Test::Pod' => '0',
-                           'Test::Pod::Coverage' => '0'
-                         },
-          'INSTALLDIRS' => 'site',
-          'PL_FILES' => {}
+                           'Test::More' => 0,
+                           'Test::Pod::Coverage' => 0,
+                           'Test::Pod' => 0
+                         }
         )
 ;

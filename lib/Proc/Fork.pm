@@ -8,7 +8,7 @@ Proc::Fork - Simple, intuitive interface to the fork() system call
 
 =head1 VERSION
 
-This documentation describes Proc::Fork version 0.2
+This documentation describes Proc::Fork version 0.3
 
 =head1 SYNOPSIS
 
@@ -259,7 +259,7 @@ package Proc::Fork;
 use Exporter;
 use Carp;
 use vars qw( $VERSION @ISA @EXPORT @EXPORT_OK );
-$VERSION   = 0.2; # also change it in the docs
+$VERSION   = 0.3; # also change it in the docs
 @ISA       = qw( Exporter );
 @EXPORT    = qw( parent child error retry );
 @EXPORT_OK = qw();
@@ -302,9 +302,9 @@ sub _process {
 	} while not defined( $pid ) and $config->{ retry }->( ++$retry );
 
 	my ( $dispatch, $param ) =
-		  ( not defined $pid ) ? ( "error", $retry )
-		: $pid == 0 ? ( "child", )
-		: ( "parent", $pid );
+		  ( not defined $pid ) ? ( error => $retry )
+		: $pid == 0 ? ( child => () )
+		: ( parent => $pid );
 
 	$config->{ $dispatch }->( $param );
 }
