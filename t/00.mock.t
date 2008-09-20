@@ -1,10 +1,9 @@
 #!perl
 use strict;
 use warnings;
+use vars '$forkres';
 
 use Test::More tests => 14;
-
-our $forkres;
 
 BEGIN { *CORE::GLOBAL::fork = sub { $forkres } }
 

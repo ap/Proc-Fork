@@ -1,6 +1,15 @@
 =head1 Revision history for Proc-Fork
 
 
+=head2 0.6 (2007-12-23 06:15:59+0100)
+
+=over 4
+
+=item * Get rid of the C<our> in the test suite so it works on pre-5.6 perls
+
+=back
+
+
 =head2 0.5 (2007-12-21 18:22:10+0100)
 
 Many thanks to David Golden for the Windows compat fixes.

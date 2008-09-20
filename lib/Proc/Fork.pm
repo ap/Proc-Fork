@@ -2,7 +2,7 @@
 
 package Proc::Fork;
 
-$VERSION = 0.5; # also change it in the docs
+$VERSION = 0.6; # also change it in the docs
 
 use strict;
 use warnings;
@@ -79,7 +79,7 @@ Proc::Fork - Simple, intuitive interface to the fork() system call
 
 =head1 VERSION
 
-This documentation describes Proc::Fork version 0.5
+This documentation describes Proc::Fork version 0.6
 
 =head1 SYNOPSIS
 
