@@ -2,7 +2,7 @@
 
 package Proc::Fork::Runner;
 
-$VERSION = 0.7;
+$VERSION = 0.71;
 
 use strict;
 use warnings;
@@ -21,12 +21,12 @@ sub set {
 
 	if ( not exists $self->{ $name } ) {
 		require Carp;
-		Carp::croak "Attempt to set invalid ${\ref $self} attribute '$name'"
+		Carp::croak( "Attempt to set invalid ${\ref $self} attribute '$name'" );
 	}
 
 	if ( 'CODE' ne ref $callback ) {
 		require Carp;
-		Carp::croak "Attempt to set ${\ref $self} attribute to value that is not a CODE reference";
+		Carp::croak( "Attempt to set ${\ref $self} attribute to value that is not a CODE reference" );
 	}
 
 	$self->{ $name } = $callback;

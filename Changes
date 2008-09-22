@@ -1,6 +1,17 @@
 =head1 Revision history for Proc-Fork
 
 
+=head2 0.71 (2008-09-22T03:09:02+0200)
+
+=over 4
+
+=item * Brown paper bag release.
+
+Forgot some mandatory parens. No idea why 5.8.8 didn't give me the syntax error that 5.10 detected.
+
+=back
+
+
 =head2 0.7 (2008-09-20 16:54:09+0200)
 
 =over 4
