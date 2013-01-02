@@ -1,7 +1,18 @@
 =head1 Revision history for Proc-Fork
 
 
-=head2 0.71 (2008-09-22T03:09:02+0200)
+=head2 0.800 (2013-01-02)
+
+=over 4
+
+=item * Completely rewrote and simplified internals.
+
+All operation and error checking is now in a single function.
+
+=back
+
+
+=head2 0.71 (2008-09-22)
 
 =over 4
 
@@ -12,7 +23,7 @@ Forgot some mandatory parens. No idea why 5.8.8 didn't give me the syntax error 
 =back
 
 
-=head2 0.7 (2008-09-20 16:54:09+0200)
+=head2 0.7 (2008-09-20)
 
 =over 4
 
@@ -31,7 +42,7 @@ Yes, this is Kwalitee whoring. Hopefully I won't make changes to the docs that I
 =back
 
 
-=head2 0.61 (2007-12-23 12:06:22+0100)
+=head2 0.61 (2007-12-23)
 
 =over 4
 
@@ -40,7 +51,7 @@ Yes, this is Kwalitee whoring. Hopefully I won't make changes to the docs that I
 =back
 
 
-=head2 0.6 (2007-12-23 06:15:59+0100)
+=head2 0.6 (2007-12-23)
 
 =over 4
 
@@ -49,7 +60,7 @@ Yes, this is Kwalitee whoring. Hopefully I won't make changes to the docs that I
 =back
 
 
-=head2 0.5 (2007-12-21 18:22:10+0100)
+=head2 0.5 (2007-12-21)
 
 Many thanks to David Golden for the Windows compat fixes.
 

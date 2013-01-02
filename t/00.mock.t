@@ -20,7 +20,7 @@ BEGIN { use_ok( 'Proc::Fork' ); }
 
 # error catching attempts
 eval { parent {} "oops" };
-like( $@, qr/^Syntax error \(missing semicolon after \w+ clause\?\)/, 'syntax error catcher fired' );
+like( $@, qr/^Garbage in Proc::Fork setup \(missing semicolon after \w+ clause\?\)/, 'syntax error catcher fired' );
 
 # test retry logic
 my $expect_try;

@@ -1,63 +1,62 @@
 package Proc::Fork;
 use strict;
 use warnings;
-use vars '$RUN_CLASS';
+use Scalar::Util ();
 
 # ABSTRACT: simple, intuitive interface to the fork() system call
 
 my @block; BEGIN { @block = qw( parent child error retry ) }
 
-$RUN_CLASS = do {
+my $runner = do {
 	package Proc::Fork::Runner;
-
 	use Object::Tiny::Lvalue @block;
-
-	sub run {
-		my $self = shift;
-
-		my $pid;
-		my $i;
-
-		{
-			$pid = fork;
-			last if defined $pid;
-			redo if $self->retry and $self->retry->( ++$i );
-			$_->() for $self->error || die "Cannot fork: $!\n";
-			return;
-		}
-
-		$_->( $pid ) for ( $pid ? $self->parent : $self->child ) || ();
-
-		return;
-	}
-
 	__PACKAGE__;
 };
 
-sub run_fork($) {
-	my $runner = shift;
-	$runner = $runner->() if 'CODE' eq ref $runner; # backcompat
-	if ( not eval { $runner->isa( $RUN_CLASS ) } ) {
-		require Carp;
-		Carp::croak( "Syntax error (trailing garbage in block after Proc::Fork setup?)" );
+sub _croak { require Carp; goto &Carp::croak }
+
+sub run_fork(&) {
+	my $setup = shift;
+
+	my $r = $runner->new;
+
+	my $last_block;
+	for my $code ( $setup->() ) {
+		my $block = ref $code;
+		unless ( $r->can( $block ) and 'CODE' eq Scalar::Util::reftype $code ) {
+			my $suggestion = defined $last_block
+				? "after $last_block clause"
+				: 'before setup in run_fork';
+			_croak "Garbage in Proc::Fork setup (missing semicolon $suggestion?)";
+		}
+		_croak "Duplicate $block clause in Proc::Fork setup" if $r->$block;
+		$r->$block = $code;
+		$last_block = $block;
 	}
-	$runner->run;
+
+	my $pid;
+	my $i;
+
+	{
+		$pid = fork;
+		last if defined $pid;
+		redo if $r->retry and $r->retry->( ++$i );
+		die "Cannot fork: $!\n" if not $r->error;
+		$r->error->();
+		return;
+	}
+
+	$_->( $pid || () ) for ( $pid ? $r->parent : $r->child ) || ();
+
 	return;
 }
 
 sub _make_block {
 	my $block = shift;
-	sub (&;$) {
-		my $code = shift;
-		my $runner = @_ ? shift : $RUN_CLASS->new;
-		if ( @_ or 'CODE' ne ref $code or not eval { $runner->isa( $RUN_CLASS ) } ) {
-			require Carp;
-			Carp::croak( "Syntax error (missing semicolon after $block clause?)" );
-		}
-		$runner->$block = $code;
-		# if not called in void context, then we're not the final part of the call
-		# chain, so just pass the runner up the chain
-		defined wantarray ? $runner : $runner->run;
+	sub (&;@) {
+		bless $_[0], $block;
+		if ( not defined wantarray ) { my $b = \@_; run_fork { @$b } } # backcompat
+		@_;
 	};
 }
 
