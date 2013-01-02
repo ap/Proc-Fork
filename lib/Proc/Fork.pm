@@ -5,12 +5,38 @@ use vars '$RUN_CLASS';
 
 # ABSTRACT: simple, intuitive interface to the fork() system call
 
-$RUN_CLASS ||= 'Proc::Fork::Runner';
-eval "require $RUN_CLASS" or die $@;
+my @block; BEGIN { @block = qw( parent child error retry ) }
 
-sub run_fork(&) {
-	my ( $setup ) = @_;
-	my $runner = $setup->();
+$RUN_CLASS = do {
+	package Proc::Fork::Runner;
+
+	use Object::Tiny::Lvalue @block;
+
+	sub run {
+		my $self = shift;
+
+		my $pid;
+		my $i;
+
+		{
+			$pid = fork;
+			last if defined $pid;
+			redo if $self->retry and $self->retry->( ++$i );
+			$_->() for $self->error || die "Cannot fork: $!\n";
+			return;
+		}
+
+		$_->( $pid ) for ( $pid ? $self->parent : $self->child ) || ();
+
+		return;
+	}
+
+	__PACKAGE__;
+};
+
+sub run_fork($) {
+	my $runner = shift;
+	$runner = $runner->() if 'CODE' eq ref $runner; # backcompat
 	if ( not eval { $runner->isa( $RUN_CLASS ) } ) {
 		require Carp;
 		Carp::croak( "Syntax error (trailing garbage in block after Proc::Fork setup?)" );
@@ -19,32 +45,28 @@ sub run_fork(&) {
 	return;
 }
 
-my $make_forkblock = sub {
-	my ( $config_key ) = shift;
+sub _make_block {
+	my $block = shift;
 	sub (&;$) {
-		my ( $val, $config ) = @_;
-
-		# too many arguments or not a config hash as 2nd argument?
-		# then the user has almost certainly forgotten the trailing semicolon
-		if ( @_ > 2 or ( @_ == 2 and not eval { $config->isa( $RUN_CLASS ) } ) ) {
+		my $code = shift;
+		my $runner = @_ ? shift : $RUN_CLASS->new;
+		if ( @_ or 'CODE' ne ref $code or not eval { $runner->isa( $RUN_CLASS ) } ) {
 			require Carp;
-			Carp::croak( "Syntax error (missing semicolon after $config_key clause?)" );
+			Carp::croak( "Syntax error (missing semicolon after $block clause?)" );
 		}
-
-		( $config ||= $RUN_CLASS->new )->set( $config_key, $val );
-
+		$runner->$block = $code;
 		# if not called in void context, then we're not the final part of the call
-		# chain, so just pass the config up the chain
-		defined wantarray ? return $config : $config->run;
+		# chain, so just pass the runner up the chain
+		defined wantarray ? $runner : $runner->run;
 	};
-};
+}
 
 require Exporter::Tidy;
 Exporter::Tidy->import(
 	default => [ ':all' ],
 	wrapper => [ 'run_fork' ],
-	blocks  => [ $RUN_CLASS->blocks ],
-	_map    => { map { $_ => $make_forkblock->( $_ ) } $RUN_CLASS->blocks },
+	blocks  => \@block,
+	_map    => { map { $_ => _make_block $_ } @block },
 );
 
 __PACKAGE__->import( ':blocks' );
