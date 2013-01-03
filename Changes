@@ -1,6 +1,17 @@
 =head1 Revision history for Proc-Fork
 
 
+=head2 0.801 (2013-01-03)
+
+=over 4
+
+=item * No functional changes.
+
+Figured out how to add the credit to Eric Roode for the docs back into the POD under Pod::Weaver.
+
+=back
+
+
 =head2 0.800 (2013-01-02)
 
 =over 4

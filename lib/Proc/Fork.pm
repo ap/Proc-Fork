@@ -292,3 +292,7 @@ This package exports the following symbols by default.
 None currently known, for what that's worth.
 
 Please report bugs or feature requests to L<http://github.com/ap/Proc-Fork/issues>.
+
+=head1 AUTHOR
+
+Documentation by Eric J. Roode.
