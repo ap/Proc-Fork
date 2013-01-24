@@ -1,38 +1,26 @@
 package Proc::Fork;
 use strict;
 use warnings;
-use Scalar::Util ();
 
 # ABSTRACT: simple, intuitive interface to the fork() system call
 
-my @block; BEGIN { @block = qw( parent child error retry ) }
-
-my $runner = do {
-	package Proc::Fork::Runner;
-	use Object::Tiny::Lvalue @block;
-	__PACKAGE__;
-};
+use Exporter::Tidy (
+	default => [ ':all' ],
+	wrapper => [ 'run_fork' ],
+	blocks  => [ qw( parent child error retry ) ],
+);
 
 sub _croak { require Carp; goto &Carp::croak }
+
+my $do_clear = 1;
+my ( $parent, $child, $error, $retry );
 
 sub run_fork(&) {
 	my $setup = shift;
 
-	my $r = $runner->new;
-
-	my $last_block;
-	for my $code ( $setup->() ) {
-		my $block = ref $code;
-		unless ( $r->can( $block ) and 'CODE' eq Scalar::Util::reftype $code ) {
-			my $suggestion = defined $last_block
-				? "after $last_block clause"
-				: 'before setup in run_fork';
-			_croak "Garbage in Proc::Fork setup (missing semicolon $suggestion?)";
-		}
-		_croak "Duplicate $block clause in Proc::Fork setup" if $r->$block;
-		$r->$block = $code;
-		$last_block = $block;
-	}
+	my @r = $setup->();
+	_croak "Garbage in Proc::Fork setup (semicolon after last block clause?)" if @r;
+	$do_clear = 1;
 
 	my $pid;
 	my $i;
@@ -40,35 +28,29 @@ sub run_fork(&) {
 	{
 		$pid = fork;
 		last if defined $pid;
-		redo if $r->retry and $r->retry->( ++$i );
-		die "Cannot fork: $!\n" if not $r->error;
-		$r->error->();
+		redo if $retry and $retry->( ++$i );
+		die "Cannot fork: $!\n" if not $error;
+		$error->();
 		return;
 	}
 
-	$_->( $pid || () ) for ( $pid ? $r->parent : $r->child ) || ();
+	$_->( $pid || () ) for ( $pid ? $parent : $child ) || ();
 
 	return;
 }
 
-sub _make_block {
-	my $block = shift;
-	sub (&;@) {
-		bless $_[0], $block;
-		if ( not defined wantarray ) { my $b = \@_; run_fork { @$b } } # backcompat
-		@_;
-	};
+for my $block ( qw( parent child error retry ) ) {
+	my $code = q{sub _BLOCK_ (&;@) {
+		$parent = $child = $error = $retry = $do_clear = undef if $do_clear;
+		_croak "Duplicate _BLOCK_ clause in Proc::Fork setup" if $_BLOCK_;
+		$_BLOCK_ = shift if 'CODE' eq ref $_[0];
+		_croak "Garbage in Proc::Fork setup (after _BLOCK_ clause)" if @_;
+		run_fork {} if not defined wantarray; # backcompat
+		();
+	}};
+	$code =~ s/_BLOCK_/$block/g;
+	eval $code;
 }
-
-require Exporter::Tidy;
-Exporter::Tidy->import(
-	default => [ ':all' ],
-	wrapper => [ 'run_fork' ],
-	blocks  => \@block,
-	_map    => { map { $_ => _make_block $_ } @block },
-);
-
-__PACKAGE__->import( ':blocks' );
 
 1;
 

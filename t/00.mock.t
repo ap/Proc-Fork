@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use vars '$forkres';
 
-use Test::More tests => 14;
+use Test::More tests => 13;
 
 BEGIN { *CORE::GLOBAL::fork = sub { $forkres } }
 
@@ -20,7 +20,7 @@ BEGIN { use_ok( 'Proc::Fork' ); }
 
 # error catching attempts
 eval { parent {} "oops" };
-like( $@, qr/^Garbage in Proc::Fork setup \(missing semicolon after \w+ clause\?\)/, 'syntax error catcher fired' );
+like( $@, qr/^Garbage in Proc::Fork setup \(after \w+ clause\)/, 'syntax error catcher fired' );
 
 # test retry logic
 my $expect_try;
@@ -32,7 +32,5 @@ retry {
 error {
 	is( $expect_try, 5, 'abort after 5th attempt' );
 };
-
-ok( 1, 'I can have a coke now' );
 
 # vim:ft=perl:

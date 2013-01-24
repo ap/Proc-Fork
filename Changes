@@ -1,6 +1,17 @@
 =head1 Revision history for Proc-Fork
 
 
+=head2 0.802 (2013-01-24)
+
+=over 4
+
+=item * Simplified internals further still.
+
+No monkeying with C<bless>, also dropped dependencies on Object::Tiny::Lvalue and Scalar::Util.
+
+=back
+
+
 =head2 0.801 (2013-01-03)
 
 =over 4
