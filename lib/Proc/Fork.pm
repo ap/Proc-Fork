@@ -71,7 +71,7 @@ __END__
      }
      retry {
          my $attempts = shift;
-         # what to do if if fork() fails:
+         # what to do if fork() fails:
          # return true to try again, false to abort
          return if $attempts > 5;
          sleep 1, return 1;
