@@ -1,6 +1,8 @@
-package Proc::Fork;
+use 5.006;
 use strict;
 use warnings;
+
+package Proc::Fork;
 
 # ABSTRACT: simple, intuitive interface to the fork() system call
 
