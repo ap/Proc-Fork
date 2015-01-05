@@ -280,3 +280,7 @@ Please report bugs or feature requests to L<http://github.com/ap/Proc-Fork/issue
 =head1 AUTHOR
 
 Documentation by Eric J. Roode.
+
+=head1 COPYRIGHT AND LICENSE
+
+This documentation is copyright (c) 2002 by Eric J. Roode.
