@@ -1,5 +1,10 @@
 Release history for Proc-Fork
 
+0.803 Mon 05 Jan 2015
+	- No functional changes
+	- Test suite cleanup
+	- Minimum Perl requirement specified
+
 0.802 Thu 24 Jan 2013
 	- Simplified internals further still
 
