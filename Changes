@@ -1,203 +1,80 @@
-=head1 Revision history for Proc-Fork
-
-
-=head2 0.802 (2013-01-24)
-
-=over 4
-
-=item * Simplified internals further still.
-
-No monkeying with C<bless>, also dropped dependencies on Object::Tiny::Lvalue and Scalar::Util.
-
-=back
-
-
-=head2 0.801 (2013-01-03)
-
-=over 4
-
-=item * No functional changes.
-
-Figured out how to add the credit to Eric Roode for the docs back into the POD under Pod::Weaver.
-
-=back
-
-
-=head2 0.800 (2013-01-02)
-
-=over 4
-
-=item * Completely rewrote and simplified internals.
-
-All operation and error checking is now in a single function.
-
-=back
-
-
-=head2 0.71 (2008-09-22)
-
-=over 4
-
-=item * Brown paper bag release.
-
-Forgot some mandatory parens. No idea why 5.8.8 didn't give me the syntax error that 5.10 detected.
-
-=back
-
-
-=head2 0.7 (2008-09-20)
-
-=over 4
-
-=item * Completely new internal structure; modified API, now with a C<run_fork> wrapper.
-
-This should address both the semicolon problem and the context sensitivity problem pointed out on AnnoCPAN by dmcbride. Code written against the previous API design will continue to work unchanged.
-
-=item * L<Exporter::Tidy> replaces some local code.
-
-It's a very small pure-Perl module that shouldn't be a dependency burden, and it's a good design that deserves some advertisement.
-
-=item * POD examples extracted and provided as files in an F<eg/> directory.
-
-Yes, this is Kwalitee whoring. Hopefully I won't make changes to the docs that I then forget to update in the F<eg/> copies. Yay for CPANTS.
-
-=back
-
-
-=head2 0.61 (2007-12-23)
-
-=over 4
-
-=item * Test suite fix attempt: in Perl 5.5.5, C<t/01.real.t> would generate the TAP header multiple times
-
-=back
-
-
-=head2 0.6 (2007-12-23)
-
-=over 4
-
-=item * Get rid of the C<our> in the test suite so it works on pre-5.6 perls
-
-=back
-
-
-=head2 0.5 (2007-12-21)
-
-Many thanks to David Golden for the Windows compat fixes.
-
-=over 4
-
-=item * Windows compat: drop in-place modification of C<@_> and use of C<goto>
-
-=item * Windows compat: remove taint checking from tests to fix 
-
-=item * Only load L<Carp> on demand
-
-=item * Stop using of L<Exporter>
-
-=back
-
-
-=head2 0.4 (2007-04-01)
-
-=over 4
-
-=item * Simplify internals a bit, in hopes of fixing #17474 and #17926; unfortunately, no dice
-
-=back
-
-
-=head2 0.3 (2006-05-10)
-
-=over 4
-
-=item * Add tests with real fork() call, with intent to resolve stalled bugs #17474 and #17926
-
-=item * Add test for $pid getting passed to the parent block
-
-=back
-
-
-=head2 0.2 (2006-03-04)
-
-=over 4
-
-=item * Internals refactor to fix bugs #17474 and #17926
-
-=item * Rejig tests, add a test for the syntax error catcher
-
-=back
-
-
-=head2 0.11 (2005-10-03)
-
-=over 4
-
-=item * Add tests for POD and POD coverage
-
-=item * Switch over to Module::Build
-
-=back
-
-
-=head2 0.1 (2005-04-23)
-
-=over 4
-
-=item * Minor documentation fix
-
-=item * Complete internals refactor
-
-=item * Add support and documentation for retry {}
-
-=item * Create proper test suite
-
-=back
-
-
-=head2 0.05 (2002-03-15)
-
-=over 4
-
-=item * Change namespace from Fork to Proc::Fork.
-
-=back
-
-
-=head2 0.04 (2002-02-8)
-
-=over 4
-
-=item * Export parent, child, error by default.
-
-=item * Add documentation examples.
-
-=back
-
-
-=head2 0.03 (2002-01-31)
-
-=over 4
-
-=item * Documentation changes only.
-
-=back
-
-
-=head2 0.02 (2002-01-30)
-
-=over 4
-
-=item * Bless the fork return value, for better error checking.
-
-=back
-
-
-=head2 0.01 (2002-01-29)
-
-=over 4
-
-=item * original version
-
-=back
+Release history for Proc-Fork
+
+0.802 Thu 24 Jan 2013
+	- Simplified internals further still
+
+0.801 Thu 03 Jan 2013
+	- No functional changes
+	- Credit to Eric Roode for the docs added back
+
+0.800 Wed 02 Jan 2013
+	- Complete rewrite and simplification of internals
+	  (all operation and error checking is now in a single function)
+
+0.71 Mon 22 Sep 2008
+	- Brown paper bag release
+	  (forgot some parens that are mandatory in 5.10 but not 5.8.8)
+
+0.7 Sat 20 Sep 2008
+	- Completely new internal structure; modified API, now with a C<run_fork> wrapper.
+	  Should address both the semicolon problem and the context sensitivity
+	  problem pointed out on AnnoCPAN by dmcbride. Code written against the
+	  previous API design will continue to work unchanged.
+	- L<Exporter::Tidy> replaces some local code.
+	- POD examples extracted and provided as files in an F<eg/> directory.
+	  Yes, this is Kwalitee whoring. Hopefully I won't make changes to the docs
+	  that I then forget to update in the F<eg/> copies. Yay for CPANTS.
+
+0.61 Sun 23 Dec 2007
+	- Test suite fix for Perl 5.5.5
+	  (t/01.real.t would generate the TAP header multiple times)
+
+0.6 Sun 23 Dec 2007
+	- No `our` in test suite, now works on pre-5.6 perls
+
+0.5 Fri 21 Dec 2007
+	- Windows compat: no in-place modification of C<@_> with C<goto>
+	- Windows compat: no taint checking in tests
+	- Many thanks to David Golden for the Windows compat fixes
+	- Carp loaded on demand
+	- Exporter dropped
+
+0.4 Sun 01 Apr 2007
+	- Internals simplification in hopes of fixing #17474 and #17926;
+	  unfortunately, no dice
+
+0.3 Wed 10 May 2006
+	- Tests with real fork() call
+	  (intended to resolve stalled bugs #17474 and #17926)
+	- Test for $pid getting passed to the parent block
+
+0.2 Sat 04 Mar 2006
+	- Internals refactor to fix bugs #17474 and #17926
+	- Test suite rejig, new test for the syntax error catcher
+
+0.11 Mon 03 Oct 2005
+	- POD and POD coverage tests
+	- Now using Module::Build
+
+0.1 Sat 23 Apr 2005
+	- Minor documentation fix
+	- Complete internals refactor
+	- Support and documentation for retry {}
+	- Proper test suite
+
+0.05 Fri 15 Mar 2002
+	- Namespace change from Fork to Proc::Fork
+
+0.04 Fri 08 Feb 2002
+	- Parent, child, error exported by default
+	- Documentation examples
+
+0.03 Thu 31 Jan 2002
+	- No functional changes
+	- Documentation edits
+
+0.02 Wed 30 Jan 2002
+	- Blessed fork return value for better error checking
+
+0.01 Tue 29 Jan 2002
+	- Initial release
