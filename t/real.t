@@ -13,5 +13,3 @@ __END__
 
 child  {                     say 'ok 2 - child code runs'  }
 parent { waitpid shift, 0;   say 'ok 3 - parent code runs' }
-
-# vim:ft=perl:

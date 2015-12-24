@@ -30,5 +30,3 @@ retry {
 error {
 	is( $expect_try, 5, 'abort after 5th attempt' );
 };
-
-# vim:ft=perl:
