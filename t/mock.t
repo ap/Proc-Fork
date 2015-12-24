@@ -1,10 +1,10 @@
 #!perl
 use strict;
 use warnings;
-use vars '$forkres';
 
 use Test::More tests => 13;
 
+our $forkres;
 BEGIN { *CORE::GLOBAL::fork = sub { $forkres } }
 
 BEGIN { use_ok( 'Proc::Fork' ); }
