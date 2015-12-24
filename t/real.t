@@ -1,6 +1,4 @@
-#!perl
-use strict;
-use warnings;
+use strict; use warnings;
 
 # impossible to beat Test::More into submission when fork() is involved
 # note: parent uses waitpid to ensure order of output
