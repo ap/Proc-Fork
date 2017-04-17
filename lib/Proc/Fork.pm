@@ -56,6 +56,8 @@ for my $block ( qw( parent child error retry ) ) {
 
 __END__
 
+=pod
+
 =head1 SYNOPSIS
 
  use Proc::Fork;
