@@ -277,12 +277,6 @@ This package exports the following symbols by default.
 
 =back
 
-=head1 BUGS AND LIMITATIONS
-
-None currently known, for what that's worth.
-
-Please report bugs or feature requests to L<http://github.com/ap/Proc-Fork/issues>.
-
 =head1 AUTHOR
 
 Aristotle Pagaltzis <pagaltzis@gmx.de>
