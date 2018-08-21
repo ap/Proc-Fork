@@ -1,5 +1,9 @@
 Release history for Proc-Fork
 
+0.805 Tue 21 Aug 2018
+	- No functional changes
+	- No compile test and no test dependencies any more
+
 0.804 Sat 10 Jan 2015
 	- No functional changes
 	- No longer contains INSTALL file with install-as-root instructions
