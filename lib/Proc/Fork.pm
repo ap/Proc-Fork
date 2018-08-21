@@ -2,7 +2,7 @@ use 5.006; use strict; use warnings;
 
 package Proc::Fork;
 
-# ABSTRACT: simple, intuitive interface to the fork() system call
+our $VERSION = '0.804';
 
 use Exporter::Tidy (
 	default => [ ':all' ],
@@ -57,6 +57,12 @@ for my $block ( qw( parent child error retry ) ) {
 __END__
 
 =pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+Proc::Fork - simple, intuitive interface to the fork() system call
 
 =head1 SYNOPSIS
 
@@ -279,8 +285,12 @@ Please report bugs or feature requests to L<http://github.com/ap/Proc-Fork/issue
 
 =head1 AUTHOR
 
+Aristotle Pagaltzis <pagaltzis@gmx.de>
+
 Documentation by Eric J. Roode.
 
 =head1 COPYRIGHT AND LICENSE
 
 This documentation is copyright (c) 2002 by Eric J. Roode.
+
+=cut
