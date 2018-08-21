@@ -14,9 +14,6 @@ my %META = (
 			Carp                0
 			Exporter::Tidy      0
 		)} },
-		test => { requires => {qw(
-			Test::More          0
-		)} },
 	},
 	dynamic_config => 0,
 	resources      => {
