@@ -6,7 +6,7 @@ my %META = (
 	name        => 'Proc-Fork',
 	author      => 'Aristotle Pagaltzis <pagaltzis@gmx.de>',
 	license     => 'perl_5',
-	x_copyright => { holder => 'Aristotle Pagaltzis', year => 2013 },
+	x_copyright => { holder => 'Aristotle Pagaltzis', year => 2018 },
 	no_index    => {},
 	prereqs     => {
 		runtime => { requires => {qw(
