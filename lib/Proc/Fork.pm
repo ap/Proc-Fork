@@ -108,6 +108,8 @@ If the code in any of the clauses does not die or exit, it will continue executi
 
 =head1 INTERFACE
 
+All of the following functions are exported by default:
+
 =head2 run_fork
 
  run_fork { ... }
@@ -258,24 +260,6 @@ If an C<error> clause is not used, errors will raise an exception using C<die>.
          exit; # child exits. Parent loops to accept another connection.
      } }
  }
-
-=head1 EXPORTS
-
-This package exports the following symbols by default.
-
-=over 4
-
-=item * C<run_fork>
-
-=item * C<child>
-
-=item * C<parent>
-
-=item * C<retry>
-
-=item * C<error>
-
-=back
 
 =head1 AUTHOR
 
