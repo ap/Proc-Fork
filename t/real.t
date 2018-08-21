@@ -1,14 +1,9 @@
 use strict; use warnings;
 
-# impossible to beat Test::More into submission when fork() is involved
+use Proc::Fork;
 
-sub say { print @_, "\n" }
-
-BEGIN {
-	say '1..3';
-	say 'not ' x $_, 'ok 1 - use Proc::Fork' for !!eval 'use Proc::Fork; 1';
-}
+print "1..2\n";
 
 # waitpid ensures order of output
-child  {                     say 'ok 2 - child code runs'  }
-parent { waitpid shift, 0;   say 'ok 3 - parent code runs' }
+child  {                   print "ok 1 - child code runs\n"  }
+parent { waitpid shift, 0; print "ok 2 - parent code runs\n" }
