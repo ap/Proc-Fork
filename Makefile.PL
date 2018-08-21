@@ -9,13 +9,8 @@ my %META = (
 	x_copyright => { holder => 'Aristotle Pagaltzis', year => 2013 },
 	no_index    => {},
 	prereqs     => {
-		configure => { requires => {qw(
-			ExtUtils::MakeMaker 0
-		)} },
 		runtime => { requires => {qw(
 			perl                5.006
-			strict              0
-			warnings            0
 			Carp                0
 			Exporter::Tidy      0
 		)} },
