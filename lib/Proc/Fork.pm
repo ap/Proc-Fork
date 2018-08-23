@@ -150,6 +150,8 @@ If an C<error> clause is not used, errors will raise an exception using C<die>.
 
 =head2 Simple example with IPC via pipe
 
+=for eg simple.pl
+
  use strict;
  use Proc::Fork;
 
@@ -182,6 +184,8 @@ If an C<error> clause is not used, errors will raise an exception using C<die>.
  };
 
 =head2 Multi-child example
+
+=for eg multichild.pl
 
  use strict;
  use Proc::Fork;
@@ -222,6 +226,8 @@ If an C<error> clause is not used, errors will raise an exception using C<die>.
 
 =head2 Daemon example
 
+=for eg daemon.pl
+
  use strict;
  use Proc::Fork;
  use POSIX;
@@ -237,6 +243,8 @@ If an C<error> clause is not used, errors will raise an exception using C<die>.
  # rest of daemon program follows
 
 =head2 Forking socket-based network server example
+
+=for eg server.pl
 
  use strict;
  use IO::Socket::INET;
