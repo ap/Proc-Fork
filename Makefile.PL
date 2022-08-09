@@ -7,7 +7,6 @@ my %META = (
 	author      => 'Aristotle Pagaltzis <pagaltzis@gmx.de>',
 	license     => 'perl_5',
 	x_copyright => { holder => 'Aristotle Pagaltzis', year => 2018 },
-	no_index    => {},
 	prereqs     => {
 		runtime => { requires => {qw(
 			perl                5.006
@@ -29,7 +28,7 @@ MANIFEST :
 distdir : boilerplate
 .PHONY  : boilerplate
 boilerplate : distmeta
-	$(PERL) boilerplate.pl $(DISTVNAME)
+	$(PERL) -Ilib inc/boilerplate.pl $(DISTVNAME)
 
 ## BOILERPLATE ###############################################################
 require ExtUtils::MakeMaker;
