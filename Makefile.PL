@@ -1,15 +1,17 @@
 use 5.006; use strict; use warnings;
 
-my $u = 'github.com/ap/Proc-Fork';
+my $sc = q<https://github.com/ap/Proc-Fork>;
+my $bt = q<https://rt.cpan.org/Public/Dist/Display.html?Name=Proc-Fork>;
 
 my %META = (
 	name        => 'Proc-Fork',
 	author      => 'Aristotle Pagaltzis <pagaltzis@gmx.de>',
-	license     => 'perl_5',
 	x_copyright => { holder => 'Aristotle Pagaltzis', year => 2018 },
+	license     => 'perl_5',
 	resources   => {
-		repository => { type => 'git', url => "git://$u.git", web => "https://$u" },
-		bugtracker => { web => "https://$u/issues" },
+		license    => [ 'http://dev.perl.org/licenses/' ],
+		repository => { type => 'git', url => "$sc.git", web => $sc },
+		bugtracker => { web => $bt },
 	},
 	dynamic_config => 0,
 	prereqs => {
