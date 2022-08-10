@@ -148,126 +148,23 @@ If an C<error> clause is not used, errors will raise an exception using C<die>.
 
 =head1 EXAMPLES
 
+The distribution includes the following examples as separate files in the F<eg/> directory:
+
 =head2 Simple example with IPC via pipe
 
-=for eg simple.pl
-
- use strict;
- use Proc::Fork;
-
- use IO::Pipe;
- my $p = IO::Pipe->new;
-
- run_fork {
-     parent {
-         my $child = shift;
-         $p->reader;
-         print while <$p>;
-         waitpid $child,0;
-     }
-     child {
-         $p->writer;
-         print $p "Line 1\n";
-         print $p "Line 2\n";
-         exit;
-     }
-     retry {
-         if( $_[0] < 5 ) {
-             sleep 1;
-             return 1;
-         }
-         return 0;
-     }
-     error {
-         die "That's all folks\n";
-     }
- };
+F<simple.pl>
 
 =head2 Multi-child example
 
-=for eg multichild.pl
-
- use strict;
- use Proc::Fork;
- use IO::Pipe;
-
- my $num_children = 5;    # How many children we'll create
- my @children;            # Store connections to them
- $SIG{CHLD} = 'IGNORE';   # Don't worry about reaping zombies
-
- # Spawn off some children
- for my $num ( 1 .. $num_children ) {
-     # Create a pipe for parent-child communication
-     my $pipe = IO::Pipe->new;
-
-     # Child simply echoes data it receives, until EOF
-     run_fork { child {
-         $pipe->reader;
-         my $data;
-         while ( $data = <$pipe> ) {
-             chomp $data;
-             print STDERR "child $num: [$data]\n";
-         }
-         exit;
-     } };
-
-     # Parent here
-     $pipe->writer;
-     push @children, $pipe;
- }
-
- # Send some data to the kids
- for ( 1 .. 20 ) {
-     # pick a child at random
-     my $num = int rand $num_children;
-     my $child = $children[$num];
-     print $child "Hey there.\n";
- }
+F<multichild.pl>
 
 =head2 Daemon example
 
-=for eg daemon.pl
-
- use strict;
- use Proc::Fork;
- use POSIX;
-
- # One-stop shopping: fork, die on error, parent process exits.
- run_fork { parent { exit } };
-
- # Other daemon initialization activities.
- $SIG{INT} = $SIG{TERM} = $SIG{HUP} = $SIG{PIPE} = \&some_signal_handler;
- POSIX::setsid() == -1 and die "Cannot start a new session: $!\n";
- close $_ for *STDIN, *STDOUT, *STDERR;
-
- # rest of daemon program follows
+F<daemon.pl>
 
 =head2 Forking socket-based network server example
 
-=for eg server.pl
-
- use strict;
- use IO::Socket::INET;
- use Proc::Fork;
-
- $SIG{CHLD} = 'IGNORE';
-
- my $server = IO::Socket::INET->new(
-     LocalPort => 7111,
-     Type      => SOCK_STREAM,
-     Reuse     => 1,
-     Listen    => 10,
- ) or die "Couln't start server: $!\n";
-
- my $client;
- while ($client = $server->accept) {
-     run_fork { child {
-         # Service the socket
-         sleep(10);
-         print $client "Ooga! ", time % 1000, "\n";
-         exit; # child exits. Parent loops to accept another connection.
-     } }
- }
+F<server.pl>
 
 =head1 AUTHOR
 

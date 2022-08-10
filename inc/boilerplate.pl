@@ -23,20 +23,11 @@ $file{'LICENSE'} = $license->fulltext;
 
 my @source = slurp 'lib/Proc/Fork.pm';
 
-my $i = -1;
-while ( ++$i <= $#source ) {
-	$source[$i] =~ /^=for eg (.*)/ or next;
-	my $fn = "eg/$1";
-	splice @source, $i, 2;
-	mkdir 'eg';
-	my @eg;
-	while ( $i <= $#source ) {
-		$source[$i] =~ /^(?:$| )/ or last;
-		push @eg, $source[$i];
-		s/^ //, s/\G {4}/\t/g for $eg[-1];
-		++$i;
-	}
-	( $file{ $fn } = join '', @eg ) =~ s/\n+\z/\n/;
+for ( @source ) {
+	my $fn = /^F<(\w+\.pl)>$/ ? "eg/$1" : next;
+	$_ = do { local $/; slurp $fn };
+	s[^(\t+)]{ ' ' x ( 4 * length $1 ) }meg; # expand
+	s[^(?!$)]{ }mg; # indent
 }
 
 splice @source, -2, 0, "\n", $license->notice;
