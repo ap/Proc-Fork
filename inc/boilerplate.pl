@@ -1,10 +1,15 @@
 use strict; use warnings;
 
 use CPAN::Meta;
-use Software::LicenseUtils;
-use Pod::Readme::Brief;
+use Software::LicenseUtils 0.103011;
+use Pod::Readme::Brief 1.001;
 
-sub slurp { open my $fh, '<', $_[0] or die "Couldn't open $_[0] to read: $!\n"; readline $fh }
+sub slurp { open my $fh, '<', $_[0] or die "Couldn't open $_[0] to read: $!\n"; local $/; readline $fh }
+sub trimnl { s/\A\s*\n//, s/\s*\z/\n/ for @_; wantarray ? @_ : $_[-1] }
+sub mkparentdirs {
+	my @dir = do { my %seen; sort grep s!/[^/]+\z!! && !$seen{ $_ }++, my @copy = @_ };
+	if ( @dir ) { mkparentdirs( @dir ); mkdir for @dir }
+}
 
 chdir $ARGV[0] or die "Cannot chdir to $ARGV[0]: $!\n";
 
@@ -15,31 +20,37 @@ my $meta = CPAN::Meta->load_file( 'META.json' );
 my $license = do {
 	my @key = ( $meta->license, $meta->meta_spec_version );
 	my ( $class, @ambiguous ) = Software::LicenseUtils->guess_license_from_meta_key( @key );
-	die if @ambiguous;
+	die if @ambiguous or not $class;
 	$class->new( $meta->custom( 'x_copyright' ) );
 };
 
-$file{'LICENSE'} = $license->fulltext;
+my $old_notice = "This documentation is copyright (c) 2002 by Eric J. Roode.\n";
 
-my @source = slurp 'lib/Proc/Fork.pm';
+$file{'LICENSE'} = $old_notice . trimnl $license->fulltext;
 
-for ( @source ) {
-	my $fn = /^F<(\w+\.pl)>$/ ? "eg/$1" : next;
-	$_ = do { local $/; slurp $fn };
+my ( $main_module ) = map { s!-!/!g; s!^!lib/! if -d 'lib'; -f "$_.pod" ? "$_.pod" : "$_.pm" } $meta->name;
+
+( $file{ $main_module } = slurp $main_module ) =~ s{(^=cut\s*\z)}{ join "\n", (
+	"=head1 AUTHOR\n", trimnl( $meta->authors ), "Documentation by Eric J. Roode.\n",
+	"=head1 COPYRIGHT AND LICENSE\n\n$old_notice", trimnl( $license->notice ),
+	"=cut\n",
+) }me;
+
+$file{ $main_module } =~ s{^F<(\w+\.pl)>\n?}{
+	local $_ = slurp "eg/$1";
 	s[^(\t+)]{ ' ' x ( 4 * length $1 ) }meg; # expand
 	s[^(?!$)]{ }mg; # indent
-}
-
-splice @source, -2, 0, "\n", $license->notice;
-$file{'lib/Proc/Fork.pm'} = join '', @source;
+	$_;
+}meg;
 
 die unless -e 'Makefile.PL';
-$file{'README'} = Pod::Readme::Brief->new( @source )->render( installer => 'eumm' );
+$file{'README'} = Pod::Readme::Brief->new( $file{ $main_module } )->render( installer => 'eumm' );
 
-my @manifest = slurp 'MANIFEST';
+my @manifest = split /\n/, slurp 'MANIFEST';
 my %manifest = map /\A([^\s#]+)()/, @manifest;
-$file{'MANIFEST'} = join '', sort @manifest, map "$_\n", grep !exists $manifest{ $_ }, keys %file;
+$file{'MANIFEST'} = join "\n", @manifest, ( sort grep !exists $manifest{ $_ }, keys %file ), '';
 
+mkparentdirs sort keys %file;
 for my $fn ( sort keys %file ) {
 	unlink $fn if -e $fn;
 	open my $fh, '>', $fn or die "Couldn't open $fn to write: $!\n";

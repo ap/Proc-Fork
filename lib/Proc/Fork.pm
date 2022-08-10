@@ -166,14 +166,4 @@ F<daemon.pl>
 
 F<server.pl>
 
-=head1 AUTHOR
-
-Aristotle Pagaltzis <pagaltzis@gmx.de>
-
-Documentation by Eric J. Roode.
-
-=head1 COPYRIGHT AND LICENSE
-
-This documentation is copyright (c) 2002 by Eric J. Roode.
-
 =cut
