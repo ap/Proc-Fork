@@ -1,7 +1,7 @@
 use 5.006; use strict; use warnings;
 
 package Proc::Fork;
-our $VERSION = '0.807';
+our $VERSION = '0.808';
 
 use Exporter::Tidy (
 	default => [ ':all' ],
